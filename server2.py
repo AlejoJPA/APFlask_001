@@ -78,7 +78,7 @@ def get_data():
 
 
 # Endpoint for seraching for a person in data
-@app.reoute("/name_search")
+@app.route("/name_search")
 def find_person():
     """Find a person in the database. 
     It intends to deal with a requues like:     

@@ -95,4 +95,21 @@ def find_person():
         422: If argument 'q' is missing
     """
     # setup the query format. It uses request.args.get() to fetch parameters (e.g., 'q')
+
+    query = request.args.get('q') #Get the argument 'q' from the query parameters of the request
+
+    # Check if the query parameter 'q' is missing (does not exist)
+    if not query:
+        # Return a JSON response with a message indicating 'q' is missing and a 422 Unprocessable Entity status code
+        return {"message": "Query parameter 'q' is missing"}, 422
+
+    # Iterate through the 'data' list to look for the person whose first name matches the query
+    for person in data:
+        if query.lower() in person["first_name"].lower():
+            # If a match is found, return the person as a JSON response with a 200 OK status code
+            return person
+            
+    # If no match is found, return a JSON response with a message indicating the person was not found and a 404 Not Found status code
+    return {"message": "Person not found"}, 404
+
     

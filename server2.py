@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -112,4 +112,49 @@ def find_person():
     # If no match is found, return a JSON response with a message indicating the person was not found and a 404 Not Found status code
     return {"message": "Person not found"}, 404
 
-    
+
+# GET endpoint/count endpoint
+@app.get('/count')
+def count_data():
+    '''
+        This endpoint attempts to return a JSON response with the count of items in 'data' , 
+        i.e, len(data), status code: 200
+        It returns a JSON response with a message otherwise with a 500 Internal Server Error status code  
+    '''
+    #Cofigure exceptions
+    try:
+        return ({'data count': len(data)}, 200)
+   
+    except NameError:
+        returm ({'message':"data not defined"}, 500)
+
+
+# Endpoint: search for a person with a matching ID
+@app.route("/person/<uuid:id>") # Note: <uuid:id> must be in this <key:value> otherwise it is just a literal
+def find_by_uuid(id):
+    ''' for person in data:
+            if person["id"] == str(id):
+                return person
+    '''
+    # Rurn the person searched by 'id' using list comprehention format
+    person = [ p for p in data if p["id"] == str(id) ]
+
+    if person:
+        return jsonify(person)
+    else:
+        #  Return a JSON response: 404 Not Found status code if no matching person is found
+        return ({'message': 'Person not found'}, 404)
+
+# Endpoint: delete person with a matching ID
+@app.route("/person/<uuid:id>", methods=['DELETE'])
+def delete_by_uuid(id):
+    # Iterate through the 'data' list to search for a person with a matching ID
+    for person in data:
+        # Check if the 'id' field of the person matches the 'id' parameter
+        if person["id"] == str(id):
+            # Remove the person from the 'data' list
+            data.remove(person)
+            # Return a JSON response with a message confirming deletion and a 200 OK status code
+            return {"message": f"Person with ID {id} deleted"}, 200
+    # If no matching person is found, return a JSON response with a message and a 404 Not Found status code
+    return {"message": "person not found"}, 404

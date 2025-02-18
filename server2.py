@@ -148,13 +148,40 @@ def find_by_uuid(id):
 # Endpoint: delete person with a matching ID
 @app.route("/person/<uuid:id>", methods=['DELETE'])
 def delete_by_uuid(id):
-    # Iterate through the 'data' list to search for a person with a matching ID
+    '''# Iterate through the 'data' list to search for a person with a matching ID
     for person in data:
         # Check if the 'id' field of the person matches the 'id' parameter
         if person["id"] == str(id):
             # Remove the person from the 'data' list
             data.remove(person)
             # Return a JSON response with a message confirming deletion and a 200 OK status code
-            return {"message": f"Person with ID {id} deleted"}, 200
+            return {"message": f"Person with ID {id} deleted"}, 200'''
+    person = [data.remove(p) for p in data if p["id"] == str(id)]
+    if person:
+        return {"message": f"Person with ID {id} deleted"}, 200
     # If no matching person is found, return a JSON response with a message and a 404 Not Found status code
     return {"message": "person not found"}, 404
+
+#Endpoint: add person
+@app.route("/person", methods= ['POST'])
+def create_person():
+    new_person = request.get_json()
+    if not new_person:
+        return ({"message": "Invalid input, no data provided"}, 400)
+    
+    #Appending new person to 'data'
+    try:
+        data.append(new_person)
+    except NameError:
+        return {"message": "data not defined"}, 500
+    
+    #return {"message": f"{new_person['id']}"}, 200
+    return {"message": f"the person with ID: {new_person['id']} was created succesfully"}, 200
+
+
+#Error Handler
+@app.errorhandler(404)
+def api_not_found(error):
+        # This function is a custom error handler for 404 Not Found errors
+        # It is triggered whenever a 404 error occurs within the Flask application
+    return {"message": "API not found"}, 404
